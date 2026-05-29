@@ -247,6 +247,39 @@ async def หลบหนี(ctx):
 
 
 # =============================================================
+# 👆 คำสั่ง: !กด — แสดงชื่อผู้กดปุ่ม
+# =============================================================
+class PresserButton(discord.ui.Button):
+    def __init__(self):
+        super().__init__(label="กดที่นี่!", style=discord.ButtonStyle.primary, emoji="👆")
+
+    async def callback(self, interaction: discord.Interaction):
+        user = interaction.user
+        display_name = user.display_name if hasattr(user, "display_name") else user.name
+        await interaction.response.send_message(
+            f"👆 **{display_name}** (`{user.name}`) ได้กดปุ่มนี้!",
+            ephemeral=False
+        )
+
+
+class PresserView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=300)
+        self.add_item(PresserButton())
+
+
+@bot.command(name="กด")
+async def กด(ctx):
+    """ส่งปุ่มที่เมื่อกดแล้วจะแสดงชื่อผู้กด"""
+    embed = discord.Embed(
+        title="👆 กดปุ่ม",
+        description="ใครกดปุ่มนี้บ้าง? ลองกดดูสิ!",
+        color=discord.Color.blurple()
+    )
+    await ctx.send(embed=embed, view=PresserView())
+
+
+# =============================================================
 # on_ready
 # =============================================================
 @bot.event
